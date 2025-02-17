@@ -10,7 +10,7 @@ function VideoCard(props) {
 
   return (
     <Link to = {`/${props.videoData.id}`}>
-      <div className=" w-[40vw] h-[30vw] md:w-[28vw] md:h-[25vw] xl:w-[20vw] xl:h-[15vw]  my-[1vw] cursor-pointer ">
+      <div className=" w-[40vw] h-[30vw] md:w-[28vw] md:h-[25vw] xl:w-[20vw] xl:h-[15vw]  m-[1vw] cursor-pointer ">
         {/* thumbnail */}
         <div className="w-full h-[75%] aspect-video overflow-hidden rounded-[0.8vw]">
           <img

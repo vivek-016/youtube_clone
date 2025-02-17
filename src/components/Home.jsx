@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect,useMemo } from "react";
 import { mockData } from "../utils/mockData.js";
 import { useOutletContext } from "react-router-dom";
 import VideoCard from "./videoCard.jsx";
@@ -6,23 +6,33 @@ import VideoCard from "./videoCard.jsx";
 function Home() {
   const filters = [
     "All",
+    "Advertisement",
     "Gaming",
     "Valorant",
+    "kids",
     "TeluguMemes",
     "React",
     "Music",
     "Sports",
-    "Movies",
+    "Movie",
     "Tech",
     "News",
     "play",
   ];
 
+  const [selectedFilter,setSelectedFilter] = useState("All");
   const [pos, setPos] = useState(0);
   const {searchTerm}=useOutletContext();
-  const filteredVideos = mockData.filter((video)=>
-    video.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
+  const filteredVideos = mockData.filter(
+    (video) =>
+      video.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedFilter === "All" || video.categories.includes(selectedFilter))
   );
+  const handleFilterClick = (category) => {
+    if (selectedFilter !== category) {
+      setSelectedFilter(category);
+    }
+  };
   
   
   const divRef = useRef(null);
@@ -180,7 +190,8 @@ function Home() {
               {filters.map((item, index) => (
                 <button
                   key={index}
-                  className="px-3 py-1 text-[2vw] md:text-[1.75vw] lg:text-[1.5vw] xl:text-[1vw] hover:cursor-pointer bg-gray-200 rounded-md mx-1.5 max-h-[2em] flex items-center flex-nowrap focus:bg-black focus:text-white"
+                  className={`px-3 py-1 text-[2vw] md:text-[1.75vw] lg:text-[1.5vw] xl:text-[1vw] hover:cursor-pointer  rounded-md mx-1.5 max-h-[2em] flex items-center flex-nowrap focus:bg-black focus:text-white ${selectedFilter==item?"bg-black text-white": "bg-gray-200 text-black"}`}
+                  onClick={()=>handleFilterClick(item)}
                 >
                   {item}
                 </button>
@@ -218,7 +229,7 @@ function Home() {
           </button>
         </div>
         {/* Videos section */}
-        <div className="flex flex-wrap items-center justify-around">
+        <div className="flex flex-wrap items-center justify-evenly">
             {filteredVideos.map((data)=>(
               <VideoCard videoData = {data} key={data.id}/>
             ))}
