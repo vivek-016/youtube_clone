@@ -9,6 +9,7 @@ function Header(props) {
   const handleSearch = () => {
     if(input.trim()){
       props.setSearchTerm(input);
+      setInput("");
       navigate("/");
     }
   }
@@ -99,6 +100,7 @@ function Header(props) {
             <div className="pl-[1em] pr-[0.1em] h-auto flex items-center w-[30vw]">
               <input
                 type="text"
+                value={input}
                 placeholder="Search"
                 className="outline-none w-full"
                 onFocus={() => setIsFocused(true)}

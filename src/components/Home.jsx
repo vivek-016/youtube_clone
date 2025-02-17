@@ -8,16 +8,23 @@ function Home() {
     "All",
     "Advertisement",
     "Gaming",
+    "HBO",
+    "GOT",
     "Valorant",
     "kids",
+    "Tv",
     "TeluguMemes",
+    "Google",
     "React",
     "Music",
+    "Cartoon",
     "Sports",
+    "Stories",
     "Movie",
     "Tech",
     "News",
     "play",
+    "Chrome"
   ];
 
   const [selectedFilter,setSelectedFilter] = useState("All");
