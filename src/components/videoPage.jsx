@@ -4,10 +4,20 @@ import { useParams } from "react-router-dom";
 import { mockData } from "../utils/mockData.js";
 import { useState, useRef, useEffect } from "react";
 import MoreVideos from "./moreVideos.jsx";
+import useFetchVideos from "../utils/useFetchVideos.js";
+import useFetchVideo from "../utils/useFetchVideo.js";
 
 function VideoPage() {
+
+
   const params = useParams();
-  const videoData = mockData.find((data) => data.id === params.id);
+  
+  const{data,loading,error} = useFetchVideos("http://localhost:3000/api/videos");
+  const{video,videoLoading,videoError} = useFetchVideo(`http://localhost:3000/api/videos/${params._id}`);
+
+  console.log(data);
+  
+  console.log(video);
   const formatLikes = (num) => {
     if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
@@ -15,7 +25,6 @@ function VideoPage() {
     return num.toString();
   };
   const [showMore, setShowMore] = useState(false);
-  const description = videoData.description;
   const max_length = 150;
   const [commentInput, setCommentInput] = useState("");
   const [isCommentFocus, setIsCommentFocus] = useState(false);
@@ -57,6 +66,42 @@ function VideoPage() {
     setPos((prev) => Math.max(prev - 50, containerWidth - listWidth)); // Move left but prevent overflow
   };
 
+  if(videoLoading){
+    return(
+      <div className="flex h-[94vh] w-screen items-center justify-center">
+        <h1 className="text-[70px] font-bold">Loading</h1>
+      </div>
+      
+    );
+  }
+
+  if(videoError){
+    return(
+      <div className="flex h-[94vh] w-screen items-center justify-center">
+        <h1 className="text-[60px] font-bold"><span className="text-red-600">Error:</span>{error}</h1>
+      </div>
+      
+    )
+  }
+
+  if(loading){
+    return(
+      <div className="flex h-[94vh] w-screen items-center justify-center">
+        <h1 className="text-[70px] font-bold">Loading</h1>
+      </div>
+      
+    );
+  }
+
+  if(error){
+    return(
+      <div className="flex h-[94vh] w-screen items-center justify-center">
+        <h1 className="text-[60px] font-bold"><span className="text-red-600">Error:</span>{error}</h1>
+      </div>
+      
+    )
+  }
+
   return (
     <div className="w-full text-[2vw] md:text-[1.75vw] lg:text-[1.5vw] xl:text-[1vw] p-[2vw] flex flex-col lg:flex-row">
       {/* Video */}
@@ -64,7 +109,7 @@ function VideoPage() {
         {/* video player */}
         <div className="w-full lg:w-[70vw] aspect-video   rounded-[1vw] overflow-hidden">
           <ReactPlayer
-            url={videoData.videoUrl}
+            url={video.videoUrl}
             width="100%"
             height="100%"
             controls
@@ -73,12 +118,12 @@ function VideoPage() {
         </div>
         {/* Video details */}
         <div className="w-full lg:w-[70vw] my-[1vw]">
-          <h1 className="text-[1.2em] font-bold ">{videoData.title}</h1>
+          <h1 className="text-[1.2em] font-bold ">{video.title}</h1>
           {/* channel and likes */}
           <div className="flex justify-between items-center">
             {/* channel */}
             <div className="flex items-center">
-              <h1>{videoData.author}</h1>
+              <h1 className="flex flex-col justify-center items-center"><p className="font-bold">{video.channel.channelName}</p>{video.channel.subscribers} Subscribers</h1>
               <div className="mx-[1.5vw]">
                 <button className=" bg-black px-[1vw] py-[0.3vw] text-white rounded-full cursor-pointer hover:bg-gray-800 ">
                   Subscribe
@@ -105,9 +150,7 @@ function VideoPage() {
                       d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z"
                     />
                   </svg>
-                  <h1 className="text-[0.8em]">
-                    {formatLikes(videoData.likes)}
-                  </h1>
+                  <h1 className="text-[0.8em]">{formatLikes(video.likes)}</h1>
                 </button>
                 {/* dislikes */}
                 <button className="flex items-center px-[1em] py-[0.3em] rounded-r-full bg-gray-100 cursor-pointer hover:bg-gray-300 focus:bg-black focus:text-white">
@@ -193,17 +236,17 @@ function VideoPage() {
         <div className="w-full lg:w-[70vw] bg-gray-100 p-[1em] rounded-[0.5vw] my-[1vw]">
           {/* views */}
           <div className="text-[0.8em] font-semibold">
-            <h1>{formatLikes(videoData.likes)} Views</h1>
+            <h1>{formatLikes(video.likes)} Views</h1>
           </div>
           {/* description */}
           <div className="text-[0.8em] font-medium ">
             <h1>
               {showMore
-                ? description
-                : description.slice(0, max_length) +
-                  (description.length > max_length ? "..." : "")}
+                ? video.description
+                : video.description.slice(0, max_length) +
+                  (video.description.length > max_length ? "..." : "")}
             </h1>
-            {description.length > max_length && (
+            {video.description.length > max_length && (
               <button
                 className="cursor-pointer hover:underline"
                 onClick={() => setShowMore(!showMore)}
@@ -217,7 +260,7 @@ function VideoPage() {
         <div>
           {/* comments number */}
           <div className="text-[1.2em] font-bold">
-            <h1>{videoData.comments.length} Comments</h1>
+            <h1>{video.comments.length} Comments</h1>
           </div>
           {/* comment input field */}
           <div className="w-full lg:w-[70vw]">
@@ -250,11 +293,11 @@ function VideoPage() {
           </div>
           {/* Comments */}
           <div>
-            {videoData.comments.map((comment, index) => (
+            {video.comments.map((comment, index) => (
               <div key={index} className="pt-[1em] flex items-center justify-between">
                 <div>
-                  <h1 className="text-[0.8em]">@{comment.user.username}</h1>
-                  <p>{comment.body}</p>
+                  <h1 className="text-[0.8em]">@{comment.user.userName}</h1>
+                  <p>{comment.commentBody}</p>
                 </div>
                 {/* edit and delete buttons */}
                 <div className="flex items-center justify-end">
@@ -358,9 +401,11 @@ function VideoPage() {
           </div>
           {/* Videos */}
           <div>
-            {mockData.filter((data)=>(data.id!==videoData.id)).map((data,index)=>( 
-              <MoreVideos videoData = {data} key={index} />
-            ))}
+            {data
+              .filter((item) => item._id !== video._id)
+              .map((videoData, index) => (
+                <MoreVideos videoData={videoData} key={index} />
+              ))}
           </div>
         </div>
       </div>

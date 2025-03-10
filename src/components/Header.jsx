@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Link,useNavigate } from "react-router-dom";
 
 function Header(props) {
+  const [isLoggedIn,setIsLoggedIn] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isMenu, setIsMenu] = useState(false);
   const [input, setInput] = useState("");
   const navigate = useNavigate();
+
+  useEffect(()=>{
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token); //convverts token to boolean (true if exists);
+  },[])
+
   const handleSearch = () => {
     if(input.trim()){
       props.setSearchTerm(input);
@@ -137,31 +144,37 @@ function Header(props) {
 
         {/* for Account management */}
         <div>
-          {/* Sign-In box */}
-          <Link to="/login">
-            <div className="flex items-center text-blue-600 border-[1px] border-gray-200 rounded-full h-[1.75em] md:h-[1.75em] lg:h-[2em] xl:h-[2.25em] px-[1em] hover:bg-blue-100 hover:cursor-pointer">
-              {/* user Icon */}
-              <div className="pr-[0.5em]">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-auto h-[1.5em] text-blue-500"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h1>Sign in</h1>
-              </div>
-            </div>
+          {isLoggedIn?(
+            <Link to="/channel">
+              <button className="bg-blue-600 px-4 py-2 rounded">Go to Channel</button>
           </Link>
+          ):(
+              // Sifn-In 
+              <Link to="/login">
+                <div className="flex items-center text-blue-600 border-[1px] border-gray-200 rounded-full h-[1.75em] md:h-[1.75em] lg:h-[2em] xl:h-[2.25em] px-[1em] hover:bg-blue-100 hover:cursor-pointer">
+                  {/* User-Icon */}
+                  <div className="pr-[0.5em]">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-auto h-[1.5em] text-blue-500"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h1>Sign in</h1>
+                  </div>
+                </div>
+              </Link>
+           )}
         </div>
         {/* overlay for static sidebar */}
         <div

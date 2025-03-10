@@ -9,7 +9,7 @@ function VideoCard(props) {
   };
 
   return (
-    <Link to = {`/${props.videoData.id}`}>
+    <Link to = {`/${props.videoData._id}`}>
       <div className=" w-[40vw] h-[30vw] md:w-[28vw] md:h-[25vw] xl:w-[20vw] xl:h-[15vw]  m-[1vw] cursor-pointer ">
         {/* thumbnail */}
         <div className="w-full h-[75%] aspect-video overflow-hidden rounded-[0.8vw]">
@@ -27,7 +27,7 @@ function VideoCard(props) {
           </div>
           {/* channel */}
           <div className="text-gray-600">
-            <h1>{props.videoData.author}</h1>
+            <h1>{props.videoData.channel.channelName}</h1>
           </div>
           {/* views */}
           <div className="text-gray-600">

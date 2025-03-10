@@ -7,6 +7,7 @@ import './styles.css';
 import VideoPage from './components/videoPage.jsx'
 import Login from './components/login.jsx'
 import Register from './components/Register.jsx'
+import Channel from './components/Channel.jsx'
 
 
 
@@ -20,8 +21,12 @@ const appRouter = createBrowserRouter([
         element: <Home/>
       },
       {
-        path: "/:id",
+        path: "/:_id",
         element: <VideoPage/>
+      },
+      {
+        path: "/Channel",
+        element: <Channel/>
       }
     ]
   },

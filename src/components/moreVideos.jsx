@@ -12,7 +12,7 @@ function MoreVideos(props) {
   
 
   return (
-    <Link to={`/${props.videoData.id}`}>
+    <Link to={`/${props.videoData._id}`}>
       <div className="py-[0.3em] flex cursor-pointer">
         {/* thumbnail container */}
         <div className="min-w-[25%] max-w-[25%] lg:min-w-[45%] lg:max-w-[45%] aspect-video bg-red-300 rounded-[0.5vw] overflow-hidden">

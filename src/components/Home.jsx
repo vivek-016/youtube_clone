@@ -2,6 +2,7 @@ import { useRef, useState, useEffect,useMemo } from "react";
 import { mockData } from "../utils/mockData.js";
 import { useOutletContext } from "react-router-dom";
 import VideoCard from "./videoCard.jsx";
+import useFetchVideos from "../utils/useFetchVideos.js";
 
 function Home() {
   const filters = [
@@ -11,7 +12,7 @@ function Home() {
     "HBO",
     "GOT",
     "Valorant",
-    "kids",
+    "Kids",
     "Tv",
     "TeluguMemes",
     "Google",
@@ -27,10 +28,24 @@ function Home() {
     "Chrome"
   ];
 
+  const{data,loading,error} = useFetchVideos("http://localhost:3000/api/videos");
+
+
+
+  const [videos,setVideos] = useState([]);
+  useEffect(()=>{
+    if(Array.isArray(data)&&data.length>0){
+      setVideos(data);
+    }
+  },[data]);
+
+  
+  
+
   const [selectedFilter,setSelectedFilter] = useState("All");
   const [pos, setPos] = useState(0);
   const {searchTerm}=useOutletContext();
-  const filteredVideos = mockData.filter(
+  const filteredVideos = videos.filter(
     (video) =>
       video.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (selectedFilter === "All" || video.categories.includes(selectedFilter))
@@ -40,6 +55,8 @@ function Home() {
       setSelectedFilter(category);
     }
   };
+
+  
   
   
   const divRef = useRef(null);
@@ -61,6 +78,24 @@ function Home() {
   const moveRight = () => {
     setPos((prev) => Math.max(prev - 50, containerWidth - listWidth)); // Move left but prevent overflow
   };
+
+  if(loading){
+    return(
+      <div className="flex h-[94vh] w-screen items-center justify-center">
+        <h1 className="text-[70px] font-bold">Loading</h1>
+      </div>
+      
+    );
+  }
+
+  if(error){
+    return(
+      <div className="flex h-[94vh] w-screen items-center justify-center">
+        <h1 className="text-[60px] font-bold"><span className="text-red-600">Error:</span>{error}</h1>
+      </div>
+      
+    )
+  }
 
   return (
     <div className="flex h-[94vh]">
@@ -237,8 +272,9 @@ function Home() {
         </div>
         {/* Videos section */}
         <div className="flex flex-wrap items-center justify-evenly">
+          
             {filteredVideos.map((data)=>(
-              <VideoCard videoData = {data} key={data.id}/>
+              <VideoCard videoData = {data} key={data._id}/>
             ))}
         </div>
       </div>
