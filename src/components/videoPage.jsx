@@ -11,13 +11,13 @@ function VideoPage() {
 
 
   const params = useParams();
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log(user.userName);
   
   const{data,loading,error} = useFetchVideos("http://localhost:3000/api/videos");
   const{video,videoLoading,videoError} = useFetchVideo(`http://localhost:3000/api/videos/${params._id}`);
 
-  console.log(data);
-  
-  console.log(video);
+ 
   const formatLikes = (num) => {
     if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
@@ -28,10 +28,60 @@ function VideoPage() {
   const max_length = 150;
   const [commentInput, setCommentInput] = useState("");
   const [isCommentFocus, setIsCommentFocus] = useState(false);
+  const [comments,setComments] = useState([]);
+
+  useEffect(()=>{
+    if(video&&video.comments){
+      setComments(video.comments);
+      console.log("these are the comments:",comments);
+    }
+  },[video]);
+  
+ 
+
   const handleCommentCancel = () => {
     setCommentInput("");
     setIsCommentFocus(false);
   };
+  const handleSubmitComment = async ()=>{
+
+    const token = localStorage.getItem("token");
+    if(!token){
+      console.error("No token found.User must be logged in");
+      return;
+    }
+
+    if(!commentInput.trim()){
+      alert("Comment can not be empty");
+      return;
+    }
+    try{
+      const response = await fetch(`http://localhost:3000/api/videos/${params._id}/comments`,{
+        method:"POST",
+        headers: {
+          "Content-Type":"application/json",
+          "Authorization":`Bearer ${token}`
+        },
+        body: JSON.stringify({
+          user:user._id,
+          commentBody:commentInput
+        })
+      })
+      
+
+      const data = await response.json();
+
+      if(!response.ok){
+        throw new Error("Failed to add comment");
+      }
+
+      setComments((prevComments) => [...prevComments, data.comment])
+      setCommentInput("");
+
+    }catch(error){
+      console.error("Error adding comment: ",error);
+    }
+  }
 
   const filters = [
     "All",
@@ -66,7 +116,7 @@ function VideoPage() {
     setPos((prev) => Math.max(prev - 50, containerWidth - listWidth)); // Move left but prevent overflow
   };
 
-  if(videoLoading){
+  if(videoLoading || loading){
     return(
       <div className="flex h-[94vh] w-screen items-center justify-center">
         <h1 className="text-[70px] font-bold">Loading</h1>
@@ -75,7 +125,7 @@ function VideoPage() {
     );
   }
 
-  if(videoError){
+  if(videoError || error){
     return(
       <div className="flex h-[94vh] w-screen items-center justify-center">
         <h1 className="text-[60px] font-bold"><span className="text-red-600">Error:</span>{error}</h1>
@@ -84,23 +134,7 @@ function VideoPage() {
     )
   }
 
-  if(loading){
-    return(
-      <div className="flex h-[94vh] w-screen items-center justify-center">
-        <h1 className="text-[70px] font-bold">Loading</h1>
-      </div>
-      
-    );
-  }
 
-  if(error){
-    return(
-      <div className="flex h-[94vh] w-screen items-center justify-center">
-        <h1 className="text-[60px] font-bold"><span className="text-red-600">Error:</span>{error}</h1>
-      </div>
-      
-    )
-  }
 
   return (
     <div className="w-full text-[2vw] md:text-[1.75vw] lg:text-[1.5vw] xl:text-[1vw] p-[2vw] flex flex-col lg:flex-row">
@@ -260,7 +294,7 @@ function VideoPage() {
         <div>
           {/* comments number */}
           <div className="text-[1.2em] font-bold">
-            <h1>{video.comments.length} Comments</h1>
+            <h1>{comments.length} Comments</h1>
           </div>
           {/* comment input field */}
           <div className="w-full lg:w-[70vw]">
@@ -286,17 +320,17 @@ function VideoPage() {
                 Cancel
               </button>
               {/* submit */}
-              <button className="px-[1em] py-[0.3em] cursor-pointer bg-gray-100 hover:bg-gray-200 rounded-full">
+              <button onClick={handleSubmitComment} className="px-[1em] py-[0.3em] cursor-pointer bg-gray-100 hover:bg-gray-200 rounded-full">
                 Comment
               </button>
             </div>
           </div>
           {/* Comments */}
           <div>
-            {video.comments.map((comment, index) => (
+            {comments.map((comment, index) => (
               <div key={index} className="pt-[1em] flex items-center justify-between">
                 <div>
-                  <h1 className="text-[0.8em]">@{comment.user.userName}</h1>
+                  <h1 className="text-[0.8em]">@{comment.user.userName?comment.user.userName:user.userName}</h1>
                   <p>{comment.commentBody}</p>
                 </div>
                 {/* edit and delete buttons */}

@@ -2,6 +2,9 @@ import commentModel from "../Model/comment.model.js";
 import videosModel from "../Model/videos.model.js";
 
 export async function addComment(req, res) {
+
+    
+
     try {
         const { videoId } = req.params;
         const { user, commentBody, likes } = req.body;
@@ -49,9 +52,32 @@ export async function deleteComment(req,res){
         await videosModel.findByIdAndUpdate(videoId,{
             $pull: {comments: commentId}
         });
+        
 
         res.status(200).json({message:"comment deleted successfully"})
     } catch(error){
         res.status(500).json({message:"Error deleting comment",error});
+    }
+}
+
+export async function editComment(req,res){
+    try{
+
+        const {comment_id,commentBody} = req.body;
+
+        const updatedComment = await commentModel.findByIdAndUpdate(comment_id,{
+            commentBody
+        },
+        {new:true}
+    );
+
+        if(!updatedComment){
+            return res.status(404).json({message:"Comment Not found"});
+        }
+
+        return res.status(200).json({message:"Comment updated successfully",updatedComment});
+
+    }catch(error){
+        return res.status(500).json({message:"Server Error"});
     }
 }

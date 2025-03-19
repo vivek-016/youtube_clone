@@ -8,6 +8,9 @@ import VideoPage from './components/videoPage.jsx'
 import Login from './components/login.jsx'
 import Register from './components/Register.jsx'
 import Channel from './components/Channel.jsx'
+import AddChannel from './components/AddChannel.jsx'
+import UploadVideo from './components/uploadVideo.jsx'
+import EditVideo from './components/editVideo.jsx'
 
 
 
@@ -37,6 +40,18 @@ const appRouter = createBrowserRouter([
   {
     path: "/Register",
     element: <Register/>
+  },
+  {
+    path: "/AddChannel",
+    element: <AddChannel/>
+  },
+  {
+    path: "/Channel/:channel_id/AddVideo",
+    element: <UploadVideo/>
+  },
+  {
+    path: "/video/:video_id/edit",
+    element: <EditVideo/>
   }
 ])
 createRoot(document.getElementById('root')).render(

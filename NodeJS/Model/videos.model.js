@@ -5,20 +5,20 @@ import mongoose from "mongoose";
 const videoSchema = new mongoose.Schema({
     title: {
         type: String,
-        require: true
+        required: true
     },
-    thumbNailUrl: {
+    thumbnailUrl: {
         type: String,
-        require: true
+        required: true
     },
     videoUrl: {
         type: String,
-        require: true
+        required: true
     },
     channel: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "channel",
-        require: true
+        required: true
     },
     categories: [{
         type: String,
@@ -37,7 +37,7 @@ const videoSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        require: true
+        required: true
     },
     subscribers: {
         type: Number

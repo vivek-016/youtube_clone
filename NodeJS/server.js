@@ -1,10 +1,6 @@
 import mongoose from "mongoose";
 import express from "express"
-import userModel from "./Model/user.model.js";
-import channelModel from "./Model/channel.model.js";
 import { routes } from "./Routes/app.route.js";
-import videosModel from "./Model/videos.model.js";
-
 import cors from "cors";
 
 const app = new express();

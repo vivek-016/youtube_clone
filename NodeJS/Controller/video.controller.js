@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 export async function uploadVideo(req,res){
     try{
         const {channelId} = req.params;
-        const {title, thumbNailUrl, videoUrl, views, likes, dislikes, description, comments} = req.body;
+        const {title,categories, thumbnailUrl, videoUrl, views, likes, dislikes, description, comments} = req.body;
     
         // valiate video
         if(!videoUrl){
@@ -14,15 +14,16 @@ export async function uploadVideo(req,res){
         }
     
         const newVideo = new videosModel({
-            title: title,
-            thumbNailUrl: thumbNailUrl,
-            videoUrl: videoUrl,
+            title,
+            thumbnailUrl,
+            videoUrl,
             channel: channelId,
-            views: views,
-            likes: likes,
-            dislikes: dislikes,
-            description: description,
-            comments: comments
+            categories,
+            views,
+            likes,
+            dislikes,
+            description,
+            comments
         })
     
         const savedVideo = await newVideo.save();
@@ -101,5 +102,32 @@ export async function fetchVideo(req, res) {
 
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+
+export async function updateVideo(req,res){
+    try{
+        const {video_id} = req.params;
+
+        const {title,categories, thumbnailUrl, videoUrl, description} = req.body;
+    
+        // find and update video
+        const updatedVideo = await videosModel.findByIdAndUpdate(video_id,{
+            title,
+            thumbnailUrl,
+            videoUrl,
+            categories,
+            description,
+        });
+
+        if(!updatedVideo){
+            return res.status(404).json({message:"Video not found"});
+        }
+
+        return res.status(200).json({message:"video updated successfully"});
+
+
+    }catch(error){
+        return res.status(500).json({message:"Server Error"});
     }
 }

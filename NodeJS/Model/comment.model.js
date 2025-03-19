@@ -4,16 +4,16 @@ const commentSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
-        require: true
+        required: true
     },
     video: {
         type: mongoose.Schema.Types.ObjectId,
         ref:"video",
-        require: true
+        required: true
     },
     commentBody: {
         type: String,
-        require: true
+        required: true
     },
     likes: {
         type: Number,

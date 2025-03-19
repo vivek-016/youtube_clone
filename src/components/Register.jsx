@@ -21,7 +21,7 @@ function Register() {
             const response = await fetch("http://localhost:3000/api/user", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData), // ✅ Correct JSON format
+                body: JSON.stringify(formData), 
             });
 
             const data = await response.json();
@@ -48,25 +48,25 @@ function Register() {
                     <div className="flex flex-col items-center justify-center w-full px-[2em]">
                         <input
                             type="text"
-                            name="userName" // ✅ Corrected name attribute
+                            name="userName" 
                             placeholder="User Name"
-                            value={formData.userName} // ✅ Controlled component
+                            value={formData.userName} 
                             onChange={handleChange}
                             className="border-2 w-full py-[0.5em] mb-[1em] pl-[1em] outline-none focus:border-blue-600"
                         />
                         <input
                             type="password"
-                            name="password" // ✅ Corrected name attribute
+                            name="password" 
                             placeholder="Password"
-                            value={formData.password} // ✅ Controlled component
+                            value={formData.password}
                             onChange={handleChange}
                             className="border-2 w-full py-[0.5em] mb-[1em] pl-[1em] outline-none focus:border-blue-600"
                         />
                         <input
                             type="email"
-                            name="email" // ✅ Corrected name attribute
+                            name="email" 
                             placeholder="Email"
-                            value={formData.email} // ✅ Controlled component
+                            value={formData.email} 
                             onChange={handleChange}
                             className="border-2 w-full py-[0.5em] mb-[1em] pl-[1em] outline-none focus:border-blue-600"
                         />

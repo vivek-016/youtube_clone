@@ -42,6 +42,7 @@ function Login(){
 
         }catch(err){
             setError(err.message);
+            alert(`Error: ${err.message}`)
         }
     }
 

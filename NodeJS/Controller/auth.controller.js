@@ -14,6 +14,7 @@ export async function loginUser  (req, res) {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+        
 
         // Generate JWT Token
         const token = jwt.sign({ id: user._id }, JWT_SECRET);
@@ -21,5 +22,6 @@ export async function loginUser  (req, res) {
         res.json({ token, user });
     } catch (error) {
         res.status(500).json({ message: "Error logging in", error });
+
     }
 };

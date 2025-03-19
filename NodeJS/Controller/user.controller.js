@@ -1,5 +1,6 @@
 import userModel from "../Model/user.model.js";
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 
 export async function createUser(req,res){
     try{
@@ -31,3 +32,4 @@ export async function createUser(req,res){
     }
     
 }
+

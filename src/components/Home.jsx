@@ -69,7 +69,7 @@ function Home() {
       setListWidth(divRef.current.scrollWidth);
       setContainerWidth(containerRef.current.clientWidth);
     }
-  }, []);
+  }, [filters,videos]);
 
   const moveLeft = () => {
     setPos((prev) => Math.min(prev + 50, 0)); // Move right
