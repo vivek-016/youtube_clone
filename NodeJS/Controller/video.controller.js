@@ -12,7 +12,8 @@ export async function uploadVideo(req,res){
         if(!videoUrl){
             return res.status(400).json({message:"Url can not be empty."});
         }
-    
+        
+        // creating new video data
         const newVideo = new videosModel({
             title,
             thumbnailUrl,
@@ -25,7 +26,7 @@ export async function uploadVideo(req,res){
             description,
             comments
         })
-    
+        // saving new video to data base
         const savedVideo = await newVideo.save();
 
         // Update the channel collection by adding videoID
@@ -66,10 +67,11 @@ export async function deleteVideo(req,res){
 
 export async function fetchVideos(req,res){
     try{
+        // finding video data with populated channel data
         const data = await videosModel.find()
-            .populate("channel");
+            .populate("channel"); //populating video data with channel
            
-
+        // validating fetched data
         if(!data||data.length==0){
             return res.status(400).json({message: "No data found"});
         }
@@ -83,17 +85,18 @@ export async function fetchVideo(req, res) {
     try {
         const videoId = req.params.videoId;  
 
+        // validating videoId
         if (!mongoose.Types.ObjectId.isValid(videoId)) {
             return res.status(400).json({ message: "Invalid ObjectId" });
         }
-
+        // finding video data with populated channel data and userName, avatar in user from comments
         const videoData = await videosModel.findById(videoId)
             .populate("channel")
             .populate({
                 path: "comments",
                 populate: { path: "user", select: "userName avatar" }, // Populate user inside comments
               });
-
+        // validating fetched data
         if (!videoData) {
             return res.status(404).json({ message: "Video not found" });
         }
@@ -120,6 +123,7 @@ export async function updateVideo(req,res){
             description,
         });
 
+        // validate updated video
         if(!updatedVideo){
             return res.status(404).json({message:"Video not found"});
         }

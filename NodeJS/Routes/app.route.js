@@ -1,5 +1,5 @@
 import { createChannel, getChannel } from "../Controller/channel.controller.js";
-import { addComment, deleteComment } from "../Controller/comment.controller.js";
+import { addComment, deleteComment, editComment } from "../Controller/comment.controller.js";
 import { createUser, } from "../Controller/user.controller.js"
 import { deleteVideo, fetchVideos, uploadVideo, fetchVideo, updateVideo } from "../Controller/video.controller.js";
 import { loginUser } from "../Controller/auth.controller.js";
@@ -13,6 +13,7 @@ export function routes(app){
     app.post("/api/channel/:channelId/video", uploadVideo)
     app.post("/api/videos/:videoId/comments",authenticateToken, addComment);
     app.delete("/api/videos/:videoId/comments/:commentId",authenticateToken, deleteComment);
+    app.put("/api/comments/edit",authenticateToken, editComment);
     app.delete("/api/channel/:channelId/videos/:videoId",deleteVideo);
     app.get("/api/videos",fetchVideos);
     app.get("/api/videos/:videoId",fetchVideo);

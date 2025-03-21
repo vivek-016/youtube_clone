@@ -30,6 +30,9 @@ function VideoPage() {
   const [isCommentFocus, setIsCommentFocus] = useState(false);
   const [comments,setComments] = useState([]);
 
+
+
+
   useEffect(()=>{
     if(video&&video.comments){
       setComments(video.comments);
@@ -37,7 +40,66 @@ function VideoPage() {
     }
   },[video]);
   
- 
+  const [editIndex,setEditIndex] = useState(null);
+  const [editedText,setEditedText] = useState("");
+
+  const  handleEdit = (commentUser,index)=>{
+    if(user._id != commentUser){
+      console.error("You cannot edit this comment.");
+      alert("You can not edit this comment.");
+      return;
+    }
+    setEditIndex(index);
+    setEditedText(comments[index].commentBody);
+  }
+
+  const handleCancelEdit = ()=>{
+    setEditIndex(null);
+  }
+
+  const handleSaveEdit = async (index)=>{
+    if(editedText.trim() == ""){
+      alert("Comment cant be empty");
+      return;
+    }
+    try{
+
+      const token = localStorage.getItem("token");
+      if(!token){
+        console.error("No token found.User must be logged in");
+        return;
+      }
+
+      const commentToEdit = comments[index];
+
+      const response = await fetch("http://localhost:3000/api/comments/edit",{
+        method:"PUT",
+        headers: {
+          "Content-Type":"application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          comment_id: commentToEdit._id,
+          commentBody: editedText
+        })
+
+      })
+
+      const data = await response.json();
+
+      if(!response.ok){
+        throw new Error("failed to update comment");
+      }
+
+      const updatedComments = [...comments];
+      updatedComments[index].commentBody = editedText;
+      setComments(updatedComments);
+      setEditIndex(null);
+
+    }catch(error){
+      console.error("error updating comment",error);
+    }
+  }
 
   const handleCommentCancel = () => {
     setCommentInput("");
@@ -80,6 +142,39 @@ function VideoPage() {
 
     }catch(error){
       console.error("Error adding comment: ",error);
+    }
+  }
+
+
+  const handleDeleteComment = async (comment_id,commentUser)=>{
+    try{
+      const token = localStorage.getItem("token");
+      if(!token){
+        console.error("No token found. User must be logged in");
+        return;
+      }
+
+      if(user._id != commentUser){
+        console.error("You cannot delete this comment.");
+        alert("You can not delete this comment.");
+        return;
+      }
+
+      const response = await fetch(`http://localhost:3000/api/videos/${video._id}/comments/${comment_id}`,{
+        method:"DELETE",
+        headers:{
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if(!response.ok){
+        throw new Error("falied to delete comment");
+      }
+
+      setComments((prevComments)=>prevComments.filter((comment)=>comment._id!=comment_id));
+      alert("Comment deleted successfully");
+    }catch(error){
+      console.error("Error deleting comment",error);
     }
   }
 
@@ -157,7 +252,10 @@ function VideoPage() {
           <div className="flex justify-between items-center">
             {/* channel */}
             <div className="flex items-center">
-              <h1 className="flex flex-col justify-center items-center"><p className="font-bold">{video.channel.channelName}</p>{video.channel.subscribers} Subscribers</h1>
+              <h1 className="flex flex-col justify-center items-center">
+                <p className="font-bold">{video.channel.channelName}</p>
+                {video.channel.subscribers} Subscribers
+              </h1>
               <div className="mx-[1.5vw]">
                 <button className=" bg-black px-[1vw] py-[0.3vw] text-white rounded-full cursor-pointer hover:bg-gray-800 ">
                   Subscribe
@@ -320,7 +418,10 @@ function VideoPage() {
                 Cancel
               </button>
               {/* submit */}
-              <button onClick={handleSubmitComment} className="px-[1em] py-[0.3em] cursor-pointer bg-gray-100 hover:bg-gray-200 rounded-full">
+              <button
+                onClick={handleSubmitComment}
+                className="px-[1em] py-[0.3em] cursor-pointer bg-gray-100 hover:bg-gray-200 rounded-full"
+              >
                 Comment
               </button>
             </div>
@@ -328,22 +429,65 @@ function VideoPage() {
           {/* Comments */}
           <div>
             {comments.map((comment, index) => (
-              <div key={index} className="pt-[1em] flex items-center justify-between">
+              <div
+                key={index}
+                className="pt-[1em] flex items-center justify-between"
+              >
                 <div>
-                  <h1 className="text-[0.8em]">@{comment.user.userName?comment.user.userName:user.userName}</h1>
+                  <h1 className="text-[0.8em]">
+                    @
+                    {comment.user.userName
+                      ? comment.user.userName
+                      : user.userName}
+                  </h1>
                   <p>{comment.commentBody}</p>
                 </div>
                 {/* edit and delete buttons */}
                 <div className="flex items-center justify-end">
                   {/* edit */}
-                  <button className="px-[1em] py-[0.5em] bg-gray-100 rounded-full mr-[0.5em] cursor-pointer hover:bg-gray-300">
+                  <button
+                    onClick={() => handleEdit(comment.user._id, index)}
+                    className="px-[1em] py-[0.5em] bg-gray-100 rounded-full mr-[0.5em] cursor-pointer hover:bg-gray-300"
+                  >
                     Edit
                   </button>
                   {/* delete */}
-                  <button className="px-[1em] py-[0.5em] bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300">
+                  <button
+                    onClick={() =>
+                      handleDeleteComment(comment._id, comment.user._id)
+                    }
+                    className="px-[1em] py-[0.5em] bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300"
+                  >
                     Delete
                   </button>
                 </div>
+                {/* edit container */}
+                {editIndex == index && (
+                  <div className=" fixed inset-0 bg-black/50 flex items-center justify-center z-50 h-full w-full">
+                    <div className=" mt-2 flex flex-col gap-2 bg-white opacity-100 rounded-[0.5vw] p-[1vw]">
+                      <input
+                        type="text"
+                        value={editedText}
+                        onChange={(e) => setEditedText(e.target.value)}
+                        className="edit-input px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          className="text-[2vw] md:text-[1.75vw] lg:text-[1.5vw] xl:text-[1vw] save-btn px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600"
+                          onClick={() => handleSaveEdit(index)}
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="text-[2vw] md:text-[1.75vw] lg:text-[1.5vw] xl:text-[1vw] cancel-btn px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-400"
+                          onClick={handleCancelEdit}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

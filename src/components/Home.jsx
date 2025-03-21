@@ -1,8 +1,9 @@
-import { useRef, useState, useEffect,useMemo } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { mockData } from "../utils/mockData.js";
 import { useOutletContext } from "react-router-dom";
 import VideoCard from "./videoCard.jsx";
 import useFetchVideos from "../utils/useFetchVideos.js";
+import { Link } from "react-router-dom";
 
 function Home() {
   const filters = [
@@ -25,26 +26,24 @@ function Home() {
     "Tech",
     "News",
     "play",
-    "Chrome"
+    "Chrome",
   ];
 
-  const{data,loading,error} = useFetchVideos("http://localhost:3000/api/videos");
+  const { data, loading, error } = useFetchVideos(
+    "http://localhost:3000/api/videos"
+  );
 
-
-
-  const [videos,setVideos] = useState([]);
-  useEffect(()=>{
-    if(Array.isArray(data)&&data.length>0){
+  const [videos, setVideos] = useState([]);
+  useEffect(() => {
+    if (Array.isArray(data) && data.length > 0) {
       setVideos(data);
     }
-  },[data]);
+  }, [data]);
 
   
-  
-
-  const [selectedFilter,setSelectedFilter] = useState("All");
+  const [selectedFilter, setSelectedFilter] = useState("All");
   const [pos, setPos] = useState(0);
-  const {searchTerm}=useOutletContext();
+  const {isLoggedIn,setIsLoggedIn, searchTerm } = useOutletContext();
   const filteredVideos = videos.filter(
     (video) =>
       video.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -56,9 +55,11 @@ function Home() {
     }
   };
 
-  
-  
-  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
   const divRef = useRef(null);
   const containerRef = useRef(null);
   const [listWidth, setListWidth] = useState(0);
@@ -69,7 +70,7 @@ function Home() {
       setListWidth(divRef.current.scrollWidth);
       setContainerWidth(containerRef.current.clientWidth);
     }
-  }, [filters,videos]);
+  }, [filters, videos]);
 
   const moveLeft = () => {
     setPos((prev) => Math.min(prev + 50, 0)); // Move right
@@ -79,22 +80,23 @@ function Home() {
     setPos((prev) => Math.max(prev - 50, containerWidth - listWidth)); // Move left but prevent overflow
   };
 
-  if(loading){
-    return(
+  if (loading) {
+    return (
       <div className="flex h-[94vh] w-screen items-center justify-center">
         <h1 className="text-[70px] font-bold">Loading</h1>
       </div>
-      
     );
   }
 
-  if(error){
-    return(
+  if (error) {
+    return (
       <div className="flex h-[94vh] w-screen items-center justify-center">
-        <h1 className="text-[60px] font-bold"><span className="text-red-600">Error:</span>{error}</h1>
+        <h1 className="text-[60px] font-bold">
+          <span className="text-red-600">Error:</span>
+          {error}
+        </h1>
       </div>
-      
-    )
+    );
   }
 
   return (
@@ -186,98 +188,134 @@ function Home() {
         </div>
       </div>
       {/* Home page section */}
-      <div className="w-[92vw] md:w-[94vw] lg:w-[95vw] xl:w-[96vw] mt-[1vh] flex items-center mx-2 flex-col">
-
-        {/* filter section */}
-        <div className="h-[5vh] w-full flex items-center">
-          {/* Left Scroll Button */}
-          <button
-            className={`p-2 rounded-full cursor-pointer hover:bg-gray-300 ${
-              pos < 0 ? "visible" : "hidden"
-            } `}
-            onClick={moveLeft}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="h-auto w-[1.2em]"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5 8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-
-          {/* Filter Options */}
-          <div
-            ref={containerRef}
-            className="w-full h-full flex items-center overflow-hidden relative"
-          >
-            {/* Left Blur */}
-            <div
-              className={`absolute left-0 top-0 h-full w-5 bg-gradient-to-r from-white to-transparent pointer-events-none z-1 ${
+      {isLoggedIn ? (
+        <div className="w-[92vw] md:w-[94vw] lg:w-[95vw] xl:w-[96vw] mt-[1vh] flex items-center mx-2 flex-col">
+          {/* filter section */}
+          <div className="h-[5vh] w-full flex items-center">
+            {/* Left Scroll Button */}
+            <button
+              className={`p-2 rounded-full cursor-pointer hover:bg-gray-300 ${
                 pos < 0 ? "visible" : "hidden"
-              }`}
-            ></div>
-            <div
-              ref={divRef}
-              className="flex absolute transition-transform duration-300"
-              style={{ transform: `translateX(${pos}px)` }}
+              } `}
+              onClick={moveLeft}
             >
-              {filters.map((item, index) => (
-                <button
-                  key={index}
-                  className={`px-3 py-1 text-[2vw] md:text-[1.75vw] lg:text-[1.5vw] xl:text-[1vw] hover:cursor-pointer  rounded-md mx-1.5 max-h-[2em] flex items-center flex-nowrap focus:bg-black focus:text-white ${selectedFilter==item?"bg-black text-white": "bg-gray-200 text-black"}`}
-                  onClick={()=>handleFilterClick(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-            {/* Right Blur */}
-            <div
-              className={`absolute right-0 top-0 h-full w-5 bg-gradient-to-l from-white to-transparent pointer-events-none z-1 ${
-                pos <= containerWidth - listWidth ? "hidden" : "visible"
-              }`}
-            ></div>
-          </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-auto w-[1.2em]"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+            </button>
 
-          {/* Right Scroll Button */}
-          <button
-            className={`p-2 rounded-full hover:cursor-pointer hover:bg-gray-300 ${
-              pos <= containerWidth - listWidth ? "hidden" : "visible"
-            } `}
-            onClick={moveRight}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="h-auto w-[1.2em]"
+            {/* Filter Options */}
+            <div
+              ref={containerRef}
+              className="w-full h-full flex items-center overflow-hidden relative"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m8.25 4.5 7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          </button>
-        </div>
-        {/* Videos section */}
-        <div className="flex flex-wrap items-center justify-evenly">
-          
-            {filteredVideos.map((data)=>(
-              <VideoCard videoData = {data} key={data._id}/>
+              {/* Left Blur */}
+              <div
+                className={`absolute left-0 top-0 h-full w-5 bg-gradient-to-r from-white to-transparent pointer-events-none z-1 ${
+                  pos < 0 ? "visible" : "hidden"
+                }`}
+              ></div>
+              <div
+                ref={divRef}
+                className="flex absolute transition-transform duration-300"
+                style={{ transform: `translateX(${pos}px)` }}
+              >
+                {filters.map((item, index) => (
+                  <button
+                    key={index}
+                    className={`px-3 py-1 text-[2vw] md:text-[1.75vw] lg:text-[1.5vw] xl:text-[1vw] hover:cursor-pointer  rounded-md mx-1.5 max-h-[2em] flex items-center flex-nowrap focus:bg-black focus:text-white ${
+                      selectedFilter == item
+                        ? "bg-black text-white"
+                        : "bg-gray-200 text-black"
+                    }`}
+                    onClick={() => handleFilterClick(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+              {/* Right Blur */}
+              <div
+                className={`absolute right-0 top-0 h-full w-5 bg-gradient-to-l from-white to-transparent pointer-events-none z-1 ${
+                  pos <= containerWidth - listWidth ? "hidden" : "visible"
+                }`}
+              ></div>
+            </div>
+
+            {/* Right Scroll Button */}
+            <button
+              className={`p-2 rounded-full hover:cursor-pointer hover:bg-gray-300 ${
+                pos <= containerWidth - listWidth ? "hidden" : "visible"
+              } `}
+              onClick={moveRight}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-auto w-[1.2em]"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </button>
+          </div>
+          {/* Videos section */}
+          <div className="flex flex-wrap items-center justify-evenly">
+            {filteredVideos.map((data) => (
+              <VideoCard videoData={data} key={data._id} />
             ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        // If not logged in
+        <div className="flex flex-col items-center justify-center h-full w-full ">
+          <h1 className=" font-semibold mb-4 text-[4vw] md:text-[3.5vw] lg:text-[3vw] xl:text-[2vw]">
+            Please log in to view videos
+          </h1>
+
+          <Link to="/login">
+            <div className="flex items-center text-blue-600 border-[1px] border-gray-200 rounded-full h-[1.75em] md:h-[1.75em] lg:h-[2em] xl:h-[2.25em] px-[1em] hover:bg-blue-100 hover:cursor-pointer text-[4vw] md:text-[3.5vw] lg:text-[3vw] xl:text-[2vw]">
+              {/* User-Icon */}
+              <div className="pr-[0.5em]">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-auto h-[1.5em] text-blue-500"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h1>Sign in</h1>
+              </div>
+            </div>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

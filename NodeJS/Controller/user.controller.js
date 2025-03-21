@@ -6,7 +6,7 @@ export async function createUser(req,res){
     try{
         const {userName, email, password, avatar, channel} = req.body;
 
-         // Hash password
+         // Hashing password using bcrypt
          const salt = await bcrypt.genSalt(10);
          const hashedPassword = await bcrypt.hash(password, salt);
  
@@ -20,6 +20,7 @@ export async function createUser(req,res){
             channel: channel
         });
 
+        // saving the user details
         newUser.save().then(data=>{
             if(!data){
                 return res.status(400).json({message:"Something went wrong"});

@@ -9,11 +9,12 @@ import { mockData } from './utils/mockData.js'
 function App() {
 
   const [searchTerm, setSearchTerm]=useState("");
+  const [isLoggedIn,setIsLoggedIn] = useState(false);
 
   return(
     <div className='box-border m-0 p-0 w-full'>
-      <Header setSearchTerm={setSearchTerm} />
-      <Outlet context={{searchTerm}} />
+      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} setSearchTerm={setSearchTerm} />
+      <Outlet context={{isLoggedIn,setIsLoggedIn,searchTerm}} />
     </div>
   )
 }

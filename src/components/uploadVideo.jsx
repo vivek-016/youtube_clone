@@ -59,19 +59,110 @@ function UploadVideo(){
 
 
     return (
-        <div>
-            <h1>Add Video</h1>
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg p-6">
+        <h1 className="text-2xl font-bold text-center mb-6">Add Video</h1>
+        <form onSubmit={(e) => handleSubmit(e, videoData)} className="space-y-6">
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Title
+            </label>
+            <input
+              type="text"
+              name="title"
+              placeholder="Enter video title"
+              value={videoData.title}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
 
-            <form onSubmit={handleSubmit}>
-                <input type="text" name="title" placeholder="Title" value={videoData.title} onChange={handleChange} required />
-                <input type="text" name="thumbnailUrl" placeholder="thumbnailUrl" value={videoData.thumbnailUrl} onChange={handleChange} required />
-                <input type="text" name="videoUrl" placeholder="Video Url" value={videoData.videoUrl} onChange={handleChange} required/>
-                <input type="text" name="categories" placeholder="categories" value={videoData.categories} onChange={handleChange} required />
-                <textarea name="description" placeholder="Description" value={videoData.description} onChange={handleChange} required/>
+          {/* Thumbnail URL */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Thumbnail URL
+            </label>
+            <input
+              type="text"
+              name="thumbnailUrl"
+              placeholder="Enter thumbnail URL"
+              value={videoData.thumbnailUrl}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
 
-                <button type="submit" disabled={loading}>{loading?"Uploading...":"Upload Video"}</button>
-            </form>
-        </div>
+          {/* Video URL */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Video URL
+            </label>
+            <input
+              type="text"
+              name="videoUrl"
+              placeholder="Enter video URL"
+              value={videoData.videoUrl}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+
+          {/* Categories */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Categories (comma-separated)
+            </label>
+            <input
+              type="text"
+              name="categories"
+              placeholder="Enter categories"
+              value={videoData.categories}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
+            <textarea
+              name="description"
+              placeholder="Enter video description"
+              value={videoData.description}
+              onChange={handleChange}
+              required
+              rows="4"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end space-x-4">
+            <button
+              type="reset"
+              className="bg-gray-400 text-white px-6 py-2 rounded-lg hover:bg-gray-500 cursor-pointer"
+              onClick={() => setVideoData({ title: "", thumbnailUrl: "", videoUrl: "", categories: "", description: "" })}
+            >
+              Clear
+            </button>
+            <button
+              type="submit"
+              className={`bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 cursor-pointer ${loading && "opacity-70 cursor-not-allowed"}`}
+              disabled={loading}
+            >
+              {loading ? "Uploading..." : "Upload Video"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
     )
 }
 export default UploadVideo;

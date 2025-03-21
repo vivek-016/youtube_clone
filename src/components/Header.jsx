@@ -1,13 +1,15 @@
 import { useState,useEffect } from "react";
 import { Link,useNavigate } from "react-router-dom";
+import userModel from "../../NodeJS/Model/user.model";
 
-function Header(props) {
-  const [isLoggedIn,setIsLoggedIn] = useState(false);
+function Header({isLoggedIn,setIsLoggedIn, props}) {
+  
   const [hasChannel,setHasChannel] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isMenu, setIsMenu] = useState(false);
   const [input, setInput] = useState("");
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(()=>{
     const token = localStorage.getItem("token");
@@ -159,8 +161,10 @@ function Header(props) {
               {hasChannel ? (
                 // If user has a channel, shows "Channel" button
                 <Link to={`/Channel`}>
-                  <button className="flex items-center text-blue-600 border-[1px] border-gray-200 rounded-full h-[1.75em] md:h-[1.75em] lg:h-[2em] xl:h-[2.25em] px-[1em] hover:bg-blue-100 hover:cursor-pointer mr-[1em]">
-                    Channel
+                  <button className=" flex items-center text-blue-600 border-[1px] border-gray-200 rounded-full h-[1.75em] md:h-[1.75em] lg:h-[2em] xl:h-[2.25em] pr-[1em] hover:bg-blue-100 hover:cursor-pointer mr-[1em]">
+                    <div className="aspect-square h-[1.75em] md:h-[1.75em] lg:h-[2em] xl:h-[2.25em] rounded-[50%] mr-[0.5em] text-white bg-green-300 flex items-center justify-center font-bold ">
+                      {user.userName[0]}
+                    </div> Channel 
                   </button>
                 </Link>
               ) : (

@@ -20,12 +20,14 @@ export async function createChannel(req, res) {
             videos,
         });
 
+        // saving the channel to database
         const savedChannel = await newChannel.save();
+        // checking if the channel saved
         if (!savedChannel) {
             return res.status(400).json({ message: "Failed to create channel" });
         }
 
-        // Update user's channel field
+        // Updating user's channel field
         await userModel.findByIdAndUpdate(userId, { channel: savedChannel._id });
 
         return res.status(201).json(savedChannel);
@@ -41,6 +43,7 @@ export async function getChannel(req,res){
 
         const {_id} = req.params;
 
+        // finding channel
         const channel = await channelModel.findById(_id);
         
         if(!channel){

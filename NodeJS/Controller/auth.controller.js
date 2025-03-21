@@ -9,9 +9,12 @@ export async function loginUser  (req, res) {
     try {
         const { userName, password } = req.body;
 
+        // finding userName
         const user = await userModel.findOne({ userName });
+        // checking if userName exists
         if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
+        // checking if password is correct by comparing
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
         
