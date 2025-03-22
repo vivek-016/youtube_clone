@@ -10,3 +10,11 @@ To run the app you have to follow the below steps in order
 8. Use the command "npm start" to connect the server with backend.
 9. Now go to the previous terminal with directory of project folder and use the command "npm run dev" to run the app in a local server.
 10. Click on the link provided by the terminal in which our app is hosted.
+
+# The features of the App
+
+To use the app one has to first register with userName, emailId and password and login to it.
+One can watch the videos uploaded by other users, can create their own channel and upload videos, can edit and delete the videos uploaded, can comment the videos uploaded.
+We can only edit and delete the comments that we made.
+We also have filter buttons which filter the videos in homepage according to the category.
+And search bar functionality is used to find the videos by their title.
