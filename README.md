@@ -6,10 +6,11 @@ To run the app you have to follow the below steps in order
 4. Now, check if npm is installed by using "npm -v" command.
 5. If npm is not there try to reinstall nodeJs as it comes with nodeJs.
 6. After changing the directory to the project folder, use Command "npm install". It installs all the dependencies required for the project from package.json.
-7. Open another terminal and change its directory to nodeJs folder. Use command npm install.
-8. Use the command "npm start" to connect the server with backend.
-9. Now go to the previous terminal with directory of project folder and use the command "npm run dev" to run the app in a local server.
-10. Click on the link provided by the terminal in which our app is hosted.
+7. To use this app we neead mongoDB and react installed in your device.
+8. Open another terminal and change its directory to nodeJs folder. Use command npm install.
+9. Use the command "npm start" to connect the server with backend.
+10. Now go to the previous terminal with directory of project folder and use the command "npm run dev" to run the app in a local server.
+11. Click on the link provided by the terminal in which our app is hosted.
 
 # The features of the App
 
