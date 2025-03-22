@@ -43,7 +43,7 @@ function Home() {
   
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [pos, setPos] = useState(0);
-  const {isLoggedIn,setIsLoggedIn, searchTerm } = useOutletContext();
+  const {isLoggedIn,setIsLoggedIn,searchTerm } = useOutletContext();
   const filteredVideos = videos.filter(
     (video) =>
       video.title.toLowerCase().includes(searchTerm.toLowerCase()) &&

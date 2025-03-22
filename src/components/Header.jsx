@@ -2,7 +2,7 @@ import { useState,useEffect } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import userModel from "../../NodeJS/Model/user.model";
 
-function Header({isLoggedIn,setIsLoggedIn, props}) {
+function Header({isLoggedIn,setIsLoggedIn, setSearchTerm}) {
   
   const [hasChannel,setHasChannel] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -29,7 +29,7 @@ function Header({isLoggedIn,setIsLoggedIn, props}) {
 
   const handleSearch = () => {
     if(input.trim()){
-      props.setSearchTerm(input);
+      setSearchTerm(input);
       setInput("");
       navigate("/");
     }
