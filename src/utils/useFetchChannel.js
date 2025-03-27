@@ -23,7 +23,8 @@ const useFetchChannel = (url)=>{
                 });
 
                 if(!response.ok){
-                    throw new Error("error fetching data");
+                    const errorDetails = await response.json();
+                    throw new Error(errorDetails.message||"error fetching data");
                 }
                 const result = await response.json();
                 

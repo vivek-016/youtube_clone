@@ -83,7 +83,7 @@ function Home() {
   if (loading) {
     return (
       <div className="flex h-[94vh] w-screen items-center justify-center">
-        <h1 className="text-[70px] font-bold">Loading</h1>
+        <h1 className="text-[4vw] md:text-[4w] lg:text-[3.5vw] xl:text-[3vw] font-bold">Loading</h1>
       </div>
     );
   }
@@ -91,7 +91,7 @@ function Home() {
   if (error) {
     return (
       <div className="flex h-[94vh] w-screen items-center justify-center">
-        <h1 className="text-[60px] font-bold">
+        <h1 className="text-[4vw] md:text-[4w] lg:text-[3.5vw] xl:text-[3vw] font-bold">
           <span className="text-red-600">Error:</span>
           {error}
         </h1>

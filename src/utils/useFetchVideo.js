@@ -13,7 +13,8 @@ const useFetchVideo = (url) => {
                 console.log("Fetching single video from:", url);
                 const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error(`Error fetching data: ${response.statusText}`);
+                    const errorDetails = await response.json();
+                    throw new Error(errorDetails.message||`Error fetching data: ${response.statusText}`);
                 }
                 const result = await response.json();
                 console.log("Fetched Video:", result);

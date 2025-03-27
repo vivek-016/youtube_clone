@@ -73,7 +73,7 @@ export async function fetchVideos(req,res){
            
         // validating fetched data
         if(!data||data.length==0){
-            return res.status(400).json({message: "No data found"});
+            return res.status(400).json({message: "No data found. Add some videos to watch"});
         }
         res.status(200).json(data);
     }catch(error){
