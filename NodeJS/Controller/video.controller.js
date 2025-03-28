@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import videosModel from "../Model/videos.model.js";
 import channelModel from "../Model/channel.model.js";
 import mongoose from "mongoose";
