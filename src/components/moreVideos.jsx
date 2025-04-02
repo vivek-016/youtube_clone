@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { mockData } from "../utils/mockData";
 
 function MoreVideos(props) {
   const formatViews = (num) => {

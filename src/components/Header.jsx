@@ -1,6 +1,5 @@
 import { useState,useEffect } from "react";
 import { Link,useNavigate } from "react-router-dom";
-import userModel from "../../NodeJS/Model/user.model";
 
 function Header({isLoggedIn,setIsLoggedIn, setSearchTerm}) {
   
